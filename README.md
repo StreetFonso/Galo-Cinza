@@ -4,6 +4,7 @@ Cidinei não esquecerá os estilos de luta (.cs) [GTA San Andreas]
 ------- Instruções:
 
 Extraia a pasta "Galo Cinza" para a pasta do ModLoader.
+Esta versão alternativa permite escolher entre os estilos de luta aprendidos usando o comando de arma anterior/próxima arma (normalmente Q/E no teclado e L2/R2 no joystick) enquanto estiver mirando durante a luta.
 
 -------------------- Notas:
 
