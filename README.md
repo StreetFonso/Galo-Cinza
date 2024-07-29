@@ -1,5 +1,6 @@
 # Galo-Cinza
 Cidinei não esquecerá os estilos de luta (.cs) [GTA San Andreas]
+
 ------- Instruções:
 
 Extraia a pasta "Galo Cinza" para a pasta do ModLoader.
