@@ -1,13 +1,16 @@
 SCRIPT_START
 {
-	LVAR_INT scplayer iGymLS iGymSF iGymLV iGaloCinza iRandom
+	LVAR_INT scplayer iGymLS iGymSF iGymLV iGaloCinza iEstilo
 
 	GET_PLAYER_CHAR 0 scplayer
+	
+	iEstilo = 5
 
 	main_loop:
 	WAIT 0
 	SET_CHAR_ANIM_SPEED scplayer "FightD_M" 1.67 //now it's not a caress
 	IF IS_CHAR_FIGHTING scplayer
+	AND iGaloCinza = FALSE
 		IF iGymLS = FALSE
 			CLEO_CALL ReadGlobalVar 0 (8153)(iGymLS) // gym_ls_defeated
 		ELSE
@@ -24,59 +27,71 @@ SCRIPT_START
 			CLEO_CALL WriteGlobalVar 0 (8157 1)() // player_been_taught_moveLV
 		ENDIF
 		WHILE IS_CHAR_FIGHTING scplayer
-		AND iGaloCinza = FALSE
 			WAIT 0
 			SET_CHAR_ANIM_SPEED scplayer "FightD_M" 1.67 //now it's not a caress
-			IF iGymLS = TRUE
-			AND iGymSF = FALSE
-			AND iGymLV = FALSE
-				GIVE_MELEE_ATTACK_TO_CHAR scplayer 5 6 //Boxing
+			IF IS_BUTTON_JUST_PRESSED PAD1 RIGHTSHOULDER2
+				iEstilo += 1
+				WHILE IS_BUTTON_JUST_PRESSED PAD1 RIGHTSHOULDER2
+					WAIT 0
+				ENDWHILE
 			ENDIF
-			IF iGymLS = FALSE
+			IF IS_BUTTON_JUST_PRESSED PAD1 LEFTSHOULDER2
+				iEstilo -= 1
+				WHILE IS_BUTTON_JUST_PRESSED PAD1 LEFTSHOULDER2
+					WAIT 0
+				ENDWHILE
+			ENDIF
+			IF iEstilo > 7
+				iEstilo = 5
+			ENDIF
+			IF iEstilo < 5
+				iEstilo = 7
+			ENDIF
+			IF iEstilo = 5
+			AND iGymLS = TRUE
+				GIVE_MELEE_ATTACK_TO_CHAR scplayer iEstilo 6
+			ENDIF
+			IF iEstilo = 6
 			AND iGymSF = TRUE
-			AND iGymLV = FALSE
-				GIVE_MELEE_ATTACK_TO_CHAR scplayer 6 6 //Kung Fu
+				GIVE_MELEE_ATTACK_TO_CHAR scplayer iEstilo 6
 			ENDIF
-			IF iGymLS = FALSE
-			AND iGymSF = FALSE
+			IF iEstilo = 7
 			AND iGymLV = TRUE
-				GIVE_MELEE_ATTACK_TO_CHAR scplayer 7 6 //Kickboxing
-			ENDIF
-			IF iGymLS = TRUE
-			AND iGymSF = TRUE
-			AND iGymLV = FALSE
-				GENERATE_RANDOM_INT_IN_RANGE 5 7 iRandom
-				GIVE_MELEE_ATTACK_TO_CHAR scplayer iRandom 6 //Boxing or Kung Fu
-			ENDIF
-			IF iGymLS = FALSE
-			AND iGymSF = TRUE
-			AND iGymLV = TRUE
-				GENERATE_RANDOM_INT_IN_RANGE 6 8 iRandom
-				GIVE_MELEE_ATTACK_TO_CHAR scplayer iRandom 6 //Kung Fu or Kickboxing
-			ENDIF
-			IF iGymLS = TRUE
-			AND iGymSF = FALSE
-			AND iGymLV = TRUE
-				GOSUB randomize57 //Kung Fu not learned.
-				GIVE_MELEE_ATTACK_TO_CHAR scplayer iRandom 6 //Boxing or Kickboxing
-			ENDIF
-			IF iGymLS = TRUE
-			AND iGymSF = TRUE
-			AND iGymLV = TRUE
-				GENERATE_RANDOM_INT_IN_RANGE 5 8 iRandom
-				GIVE_MELEE_ATTACK_TO_CHAR scplayer iRandom 6 //Boxing, Kung Fu or Kickboxing
+				GIVE_MELEE_ATTACK_TO_CHAR scplayer iEstilo 6
 			ENDIF
 			IF iGymLS = FALSE
 			AND iGymSF = FALSE
 			AND iGymLV = FALSE
-			GIVE_MELEE_ATTACK_TO_CHAR scplayer 15 6 //Punch and kick //This will be ignored if scplayer learn any new moves.
+				GIVE_MELEE_ATTACK_TO_CHAR scplayer 15 6 //Punch and kick //This will be ignored if scplayer learn any new moves.
 			ENDIF
 		ENDWHILE
 	ENDIF
 
 	IF iGaloCinza = TRUE
-		GENERATE_RANDOM_INT_IN_RANGE 5 8 iRandom
-		GIVE_MELEE_ATTACK_TO_CHAR scplayer iRandom 6 //Cheat
+	AND IS_CHAR_FIGHTING scplayer
+		WHILE IS_CHAR_FIGHTING scplayer
+			WAIT 0
+			SET_CHAR_ANIM_SPEED scplayer "FightD_M" 1.67 //now it's not a caress
+			IF IS_BUTTON_JUST_PRESSED PAD1 RIGHTSHOULDER2
+				iEstilo += 1
+				WHILE IS_BUTTON_JUST_PRESSED PAD1 RIGHTSHOULDER2
+					WAIT 0
+				ENDWHILE
+			ENDIF
+			IF IS_BUTTON_JUST_PRESSED PAD1 LEFTSHOULDER2
+				iEstilo -= 1
+				WHILE IS_BUTTON_JUST_PRESSED PAD1 LEFTSHOULDER2
+					WAIT 0
+				ENDWHILE
+			ENDIF
+			IF iEstilo > 7
+				iEstilo = 5
+			ENDIF
+			IF iEstilo < 5
+				iEstilo = 7
+			ENDIF
+			GIVE_MELEE_ATTACK_TO_CHAR scplayer iEstilo 6
+		ENDWHILE
 	ENDIF
 
 	IF TEST_CHEAT GALOCINZA //Galo cinza de pescoço fino tem fama de grande brigador em rinhas de galo.
@@ -91,14 +106,6 @@ SCRIPT_START
 	ENDIF
 
 	GOTO main_loop
-
-	randomize57:
-	GENERATE_RANDOM_INT_IN_RANGE 5 8 iRandom
-	IF iRandom = 6 //Kung Fu not learned.
-		GOTO randomize57
-	ENDIF
-	RETURN
-
 }
 
 SCRIPT_END
